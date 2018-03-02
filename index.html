@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>GIF Tastic</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body>
+<div class="container">
+  <div id="cartoonsbuttons">
+    <button class="btn btn-info cartoon" data-name="pokemon" style="margin: 5px;">pokemon</button>
+    <button class="btn btn-info cartoon" data-name="digimon" style="margin: 5px;">digimon</button>
+    <button class="btn btn-info cartoon" data-name="yugioh" style="margin: 5px;">yugioh</button>
+  </div>
+</div>
+<div id="gifs" style="float:left; display:inline;"></div>
+<div style="float:right; margin-top:90px; margin-right:80px;"> <!--Yes i know i did inline style-->
+  <h4>Add an cartoon</h4>
+  <form id="gif-form">
+    <label for="gif-input"></label>
+    <input type="text" value="" id="gif-input">
+    <br>
+    <br>
+    <input type="submit" name="Button" class="btn btn-success" id="theButton" style="margin-left:8px">
+  </form>
+</div>
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script> 
+<script>
+    $(document).ready(function(){
+
+		 //begin on click function to get api
+        $('button').on('click', function() {
+            var cartoon = $(this).data('name');
+			var authKey = "0HNMDf6cvHEOlw49ETQvYpapYnzw4zCK&limit=3";
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + cartoon + "&api_key=" + authKey;
+    		
+            $.ajax({
+                url: queryURL,
+                method: 'GET'
+            })
+                .done(function(response) {
+    
+    
+                    console.log(response)
+    
+                    var gifGallery = response.data;
+    
+                    for (var i = 0; i < gifGallery.length; i++) {
+    
+                        var cartoonDiv = $('<div/>');
+    
+                        var p =$('<p/>');
+    					 var cartoonImage = $('<img/>');
+						
+                        p.text(gifGallery[i].rating);
+    
+                        cartoonImage.addClass('gifImages')
+    
+                        cartoonImage.attr('src', gifGallery[i].images.fixed_height.url);
+    
+                        cartoonImage.attr('data-still', gifGallery[i].images.fixed_height_still.url)
+    
+                        cartoonImage.attr('data-animate', gifGallery[i].images.fixed_height.url)
+    
+                        .attr('data-state', 'still');
+    
+                        cartoonDiv.append(p);
+    
+                        cartoonDiv.append(cartoonImage);
+    
+                        cartoonDiv.prependTo($('#gifs'));
+                    }
+    		//begin on click function from still to animate
+                    $('.gifImages').on('click', function() {
+                
+                        var state = $(this).attr('data-state'); 
+                        console.log(this);
+    
+                        if (state == 'still') {     
+                        $(this).attr('src', $(this).data('animate'));
+                        $(this).attr('data-state', 'animate');
+                        } 
+						
+						else {           
+                        $(this).attr('src', $(this).data('still'));
+						$(this).attr('data-state', 'still');
+                        }      
+                    });
+				 //end on click function from still to animate
+                });
+        });
+    //end on click function to get api
+        var cartoons = [''];
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      //Begin on click function to generate button and assign url
+            $('#theButton').on('click', function(){
+                var cartoonButton = $("#gif-input").val();
+                var newButton = $("<button/>").addClass( "btn btn-info cartoon").attr('data-name',cartoonButton).html(cartoonButton).css({'margin': '5px'});
+        
+                $("#cartoonsbuttons").append(newButton);
+                    console.log("Work");
+    
+                queryURL = "https://api.giphy.com/v1/gifs/search?q=" + cartoonButton + "&api_key=dc6zaTOxFJmzC&limit=3";
+                    console.log(cartoonButton);
+    
+                $.ajax({
+                url: queryURL,
+                method: 'GET'
+                })
+    
+                .done(function(response) {
+    
+                var gifGallery = response.data;
+    
+                    for (var i = 0; i < gifGallery.length; i++) {
+    
+                        var cartoonDiv = $('<div/>');
+                        var p =$('<p/>');
+    					var cartoonImage = $('<img/>');
+                        p.text(gifGallery[i].rating);
+    
+                        
+    
+                        cartoonImage.addClass('gifImages')
+                        cartoonImage.attr('src', gifGallery[i].images.fixed_height_still.url);
+                        cartoonImage.attr('data-still', gifGallery[i].images.fixed_height_still.url)
+                        cartoonImage.attr('data-animate', gifGallery[i].images.fixed_height.url)
+    
+                        .attr('data-state', 'still');
+    
+                        cartoonDiv.append(p);
+    
+                        cartoonDiv.append(cartoonImage);
+                        cartoonDiv.prependTo($('#gifs'));
+                    }
+    
+                    $('.gifImages').on('click', function() {
+                
+                        var state = $(this).attr('data-state'); 
+                        console.log(this);
+    
+                        if (state === 'still') {
+                        $(this).attr('src', $(this).data('animate'));
+                        $(this).attr('data-state', 'animate');
+                        }
+						
+						else {       
+                        $(this).attr('src', $(this).data('still'));
+                        $(this).attr('data-state', 'still');
+                        }      
+                    });
+                });
+    
+                $("#gif-input").val("");
+                return false;
+            })
+      
+    });
+  </script>
+</body>
+</html>
